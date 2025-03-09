@@ -1,0 +1,20 @@
+model Recipes {
+  id                String              @id @default(uuid())
+  title             String
+  domain            String?
+  image_url         String?
+  RecipeIngredients RecipeIngredients[]
+
+  @@map("recipes")
+}
+
+model RecipeIngredients {
+  recipe_id     String
+  ingredient_id Int
+
+  recipe     Recipes     @relation(fields: [recipe_id], references: [id], onDelete: Cascade)
+  ingredient Ingredients @relation(fields: [ingredient_id], references: [id], onDelete: Cascade)
+
+  @@unique([recipe_id, ingredient_id])
+  @@map("recipe_ingredients")
+}

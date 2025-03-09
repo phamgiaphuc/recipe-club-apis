@@ -1,0 +1,9 @@
+dist/
+node_modules/
+docs/
+.vscode/
+package.json/
+yarn.lock/
+package-lock.json/
+bun.lockb/
+src/base/mail/template

@@ -1,0 +1,74 @@
+model IngredientCategories {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique
+  image_url  String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
+
+  group IngredientGroups[]
+
+  @@map("ingredient_categories")
+}
+
+model Ingredients {
+  id                     Int       @id @default(autoincrement())
+  name                   String    @unique
+  image_url              String?
+  calories_kcal          Float?
+  serving_size_g         Float?
+  fat_total_g            Float?
+  fat_saturated_g        Float?
+  fat_monounsaturated_g  Float?
+  fat_polyunsaturated_g  Float?
+  fat_trans_g            Float?
+  protein_g              Float?
+  sodium_mg              Float?
+  calcium_mg             Float?
+  magnesium_mg           Float?
+  potassium_mg           Float?
+  cholesterol_mg         Float?
+  iron_mg                Float?
+  zinc_mg                Float?
+  phosphorus_mg          Float?
+  carbohydrates_total_g  Float?
+  fiber_g                Float?
+  sugar_g                Float?
+  vitamin_a_ug           Float?
+  vitamin_c_mg           Float?
+  vitamin_b1_mg          Float?
+  vitamin_b2_mg          Float?
+  vitamin_b3_mg          Float?
+  vitamin_b6_mg          Float?
+  folate_dfe_ug          Float?
+  folate_food_ug         Float?
+  folic_acid_ug          Float?
+  vitamin_b12_ug         Float?
+  vitamin_d_ug           Float?
+  vitamin_e_mg           Float?
+  vitamin_k_ug           Float?
+  water_g                Float?
+  diets                  String[]  @default([])
+  healths                String[]  @default([])
+  is_nutrition_updated   Boolean   @default(false)
+  nutrition_last_updated DateTime?
+  created_at             DateTime  @default(now())
+  updated_at             DateTime  @updatedAt
+  deleted_at             DateTime?
+
+  group              IngredientGroups[]
+  recipe_ingredients RecipeIngredients[]
+
+  @@map("ingredients")
+}
+
+model IngredientGroups {
+  category_id   Int
+  ingredient_id Int
+
+  category   IngredientCategories @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  ingredient Ingredients          @relation(fields: [ingredient_id], references: [id], onDelete: Cascade)
+
+  @@unique([category_id, ingredient_id])
+  @@map("ingredient_groups")
+}

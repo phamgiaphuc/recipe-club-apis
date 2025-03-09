@@ -1,0 +1,44 @@
+enum Role {
+  user
+  admin
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+model Users {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique
+  username     String    @unique
+  password     String
+  is_activated Boolean   @default(false)
+  is_2fa       Boolean   @default(false)
+  role         Role      @default(user)
+  last_active  DateTime?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  deleted_at   DateTime?
+
+  profile UserProfiles?
+
+  @@map("users")
+}
+
+model UserProfiles {
+  user_id    String    @unique @db.Uuid
+  first_name String
+  last_name  String
+  full_name  String
+  avatar_url String
+  gender     Gender?
+  phone_num  String?
+  address    String?
+  birth_date DateTime?
+
+  user Users @relation(fields: [user_id], references: [id])
+
+  @@map("user_profiles")
+}
