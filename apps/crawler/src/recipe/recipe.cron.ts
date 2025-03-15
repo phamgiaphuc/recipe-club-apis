@@ -40,18 +40,20 @@ export class RecipeCron {
         throw new Error("Please set a default recipe ingredient index key");
       }
       const ingredients = await this.databaseService.ingredients.findMany({
-        skip: recipe_ingr_index,
-        take: 10,
+        where: {
+          id: 132,
+        },
         orderBy: {
           id: "asc",
         },
       });
       for (const ingredient of ingredients) {
+        let crawled_retry = 0;
         this.logger.log(`Crawling recipes for ${ingredient.name}`);
         let start = 0;
         const url = this.configService.get<string>("SUPERCOOK_CRAWLER_URL");
         while (true) {
-          if (start > 200) {
+          if (start > 300) {
             break;
           }
           const request_config: AxiosRequestConfig = {
@@ -75,6 +77,13 @@ export class RecipeCron {
             break;
           } else {
             const { data } = response;
+            if (data.results.length === 0) {
+              this.logger.log(`Retry ${crawled_retry} for ${ingredient.name}`);
+              crawled_retry++;
+            }
+            if (crawled_retry === 3) {
+              break;
+            }
             start = data.start + data.results.length;
             for (const result of data.results) {
               const recipe: Pick<
