@@ -19,6 +19,12 @@ git clone git@github.com:phamgiaphuc/recipe-club-apis.git
   - Check version Yarn: `yarn -v`
   - Cài đặt thư viện: `yarn install`
 
+- Cài đặt Redis trong Docker:
+
+```
+docker run --name redis-db -p 6379:6379 -d redis:alpine3.20 --requirepass redis123
+```
+
 - Tạo file `.env` và copy biến môi trường đã được gửi
 
 - Chạy dự án: `yarn start:dev`
