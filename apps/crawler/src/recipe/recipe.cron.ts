@@ -23,7 +23,7 @@ export class RecipeCron {
     private readonly configService: ConfigService,
   ) {}
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async crawlDetailRecipes() {
     if (this.is_crawling_detail_recipes) {
       this.logger.log(
@@ -61,7 +61,7 @@ export class RecipeCron {
     }
   }
 
-  // @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   async crawlGeneralRecipes() {
     if (this.is_crawling_general_recipes) {
       this.logger.log(
