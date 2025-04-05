@@ -43,6 +43,11 @@ export class AuthController {
       });
   }
 
+  @ApiOperation({ summary: "Sign up" })
+  @Post(authRoute.signUp)
+  @HttpCode(HttpStatus.OK)
+  async signUp() {}
+
   @ApiOperation({ summary: "Get curent user's info" })
   @UseGuards(AtGuard)
   @Get(authRoute.getMe)

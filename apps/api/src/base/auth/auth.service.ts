@@ -2,7 +2,7 @@ import { SignInDto } from "@app/api/base/auth/dto/signin.dto";
 import { PayloadProps } from "@app/api/common/types/jwt";
 import { CacheService } from "@app/common/cache/cache.service";
 import { DatabaseService } from "@app/common/database/database.service";
-import { comapareData } from "@app/common/utils/bcrypt";
+import { comapareData, hashData } from "@app/common/utils/bcrypt";
 import {
   Injectable,
   InternalServerErrorException,
@@ -16,6 +16,8 @@ import { ConfigService } from "@nestjs/config";
 import { convertToMilliseconds } from "@app/common/utils/date-format";
 import { TokenService } from "@app/api/base/auth/token.service";
 import { getUnixTime } from "date-fns";
+import { SignUpDto } from "@app/api/base/auth/dto/signup.dto";
+import { generateCustomAvatarUrl } from "@app/common/utils/avatar";
 
 @Injectable()
 export class AuthService {
@@ -39,6 +41,53 @@ export class AuthService {
       });
     } catch (error) {
       throw error;
+    }
+  }
+
+  public async signUp(body: SignUpDto) {
+    try {
+      const { email, username, password, first_name, last_name } = body;
+      const existed_user = this.databaseService.users.findFirst({
+        where: {
+          OR: [{ email: email }, { username: username }],
+        },
+      });
+      if (existed_user) {
+        throw new UnauthorizedException("User already exists");
+      }
+      const user = await this.databaseService.users.create({
+        data: {
+          email: email,
+          username: username,
+          password: hashData(password),
+          is_activated: false,
+          role: "user",
+          profile: {
+            create: {
+              first_name: first_name,
+              last_name: last_name,
+              full_name: `${first_name} ${last_name}`,
+              avatar_url: generateCustomAvatarUrl(first_name, last_name),
+            },
+          },
+        },
+      });
+      const payload: PayloadProps = {
+        user_id: user.id,
+        session_id: getUnixTime(new Date()).toString(),
+        role: user.role,
+      };
+      const tokens = this.tokenService.getJwtTokens(payload);
+      await this.saveUserSession(payload);
+      this.logger.log(`User ${user.username} signed up successfully`);
+      return {
+        ...tokens,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new InternalServerErrorException(error);
     }
   }
 

@@ -1,9 +1,16 @@
 model Recipes {
-  id                String              @id @default(uuid())
-  title             String
-  domain            String?
-  image_url         String?
-  RecipeIngredients RecipeIngredients[]
+  id          String   @id @default(uuid())
+  title       String
+  domain      String?
+  image_url   String?
+  display_url String?
+  hash        String?
+  video_url   String?
+  ingredients Json[]   @default([])
+  attribs     Json?
+  tags        String[] @default([])
+
+  recipe_ingredients RecipeIngredients[]
 
   @@map("recipes")
 }
