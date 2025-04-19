@@ -7,6 +7,11 @@ import { ApiTags } from "@nestjs/swagger";
 export class IngredientController {
   constructor(private readonly ingredientService: IngredientService) {}
 
+  @Get("/")
+  async getIngredients() {
+    return this.ingredientService.getIngredients();
+  }
+
   @Get("categories")
   async getIngredientCategories() {
     return this.ingredientService.getCategories();

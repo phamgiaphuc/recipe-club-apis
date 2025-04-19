@@ -186,6 +186,7 @@ export class RecipeCron {
         value: recipe_ingr_index + 10,
       });
     } catch (error) {
+      console.log(error);
       this.logger.error(error);
       throw error;
     } finally {

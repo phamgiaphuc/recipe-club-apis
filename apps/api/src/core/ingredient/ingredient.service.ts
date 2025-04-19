@@ -20,6 +20,23 @@ export class IngredientService {
     private readonly cacheService: CacheService,
   ) {}
 
+  public async getIngredients() {
+    try {
+      const data = await this.databaseService.ingredients.findMany({
+        take: 10,
+      });
+      return {
+        data: data,
+        totalIngredients: data.length,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   public async getCategories() {
     try {
       let categories: GetCategoriesResponse[];
