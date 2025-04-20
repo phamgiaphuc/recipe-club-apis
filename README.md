@@ -27,6 +27,8 @@ docker run --name redis-db -p 6379:6379 -d redis:alpine3.20 --requirepass redis1
 
 - Tạo file `.env` và copy biến môi trường đã được gửi
 
+- Tạo Prisma Client: `npx prisma generate`
+
 - Chạy dự án: `yarn start:dev`
 
 - Dự án sau khi chạy thành công:
