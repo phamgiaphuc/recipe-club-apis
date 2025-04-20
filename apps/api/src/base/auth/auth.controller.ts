@@ -54,7 +54,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
   async getMe(@GetUserPayload() payload: PayloadProps) {
-    console.log(payload);
     return this.authService.getUserInfo(payload);
   }
 }

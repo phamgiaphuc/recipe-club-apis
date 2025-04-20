@@ -77,6 +77,12 @@ CREATE TABLE "recipes" (
     "title" TEXT NOT NULL,
     "domain" TEXT,
     "image_url" TEXT,
+    "display_url" TEXT,
+    "hash" TEXT,
+    "video_url" TEXT,
+    "ingredients" JSONB[] DEFAULT ARRAY[]::JSONB[],
+    "attribs" JSONB,
+    "tags" TEXT[] DEFAULT ARRAY[]::TEXT[],
 
     CONSTRAINT "recipes_pkey" PRIMARY KEY ("id")
 );

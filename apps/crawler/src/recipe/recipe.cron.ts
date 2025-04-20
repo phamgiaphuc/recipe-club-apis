@@ -6,7 +6,7 @@ import {
 } from "@app/crawler/recipe/recipe";
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { Cron, CronExpression } from "@nestjs/schedule";
+// import { Cron, CronExpression } from "@nestjs/schedule";
 import { Recipes } from "@prisma/client";
 import axios, { AxiosRequestConfig } from "axios";
 import { omit } from "lodash";
@@ -61,7 +61,7 @@ export class RecipeCron {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  // @Cron(CronExpression.EVERY_10_SECONDS)
   async crawlGeneralRecipes() {
     if (this.is_crawling_general_recipes) {
       this.logger.log(

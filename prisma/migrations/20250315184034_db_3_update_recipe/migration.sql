@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "recipes" ALTER COLUMN "ingredients" SET DEFAULT ARRAY[]::JSONB[],
-ALTER COLUMN "tags" SET DEFAULT ARRAY[]::TEXT[];
