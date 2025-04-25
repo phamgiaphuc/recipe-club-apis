@@ -10,7 +10,11 @@ export const enableAppMiddleware = (app: NestExpressApplication) => {
   const globalPrefix = configService.get<string>("API_SERVICE_GLOBAL_PREFIX");
 
   app.enableCors({
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://146.196.67.244:8000/",
+    ],
     credentials: true,
   });
   app.setGlobalPrefix(globalPrefix);
