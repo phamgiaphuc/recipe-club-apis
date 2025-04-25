@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 const tags = ["Auth", "Ingredients"];
 const developmentUrls = ["localhost"];
-const productionUrls = ["52.221.197.77"];
+const productionUrls = ["146.196.67.244"];
 
 const generateTags = (tags: string[]) => {
   return tags.map((tag) => {
