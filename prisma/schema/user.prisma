@@ -45,7 +45,7 @@ model UserProfiles {
 }
 
 model UserPantries {
-  user_id       String
+  user_id       String @db.Uuid
   ingredient_id Int
 
   user       Users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -53,4 +53,15 @@ model UserPantries {
 
   @@id([user_id, ingredient_id])
   @@map("user_pantries")
+}
+
+model UserRatings {
+  id         String    @id @default(uuid()) @db.Uuid
+  user_id    String    @db.Uuid
+  recipe_id  String    @db.Uuid
+  rating     Int       @default(0)
+  comment    String?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  deleted_at DateTime?
 }
