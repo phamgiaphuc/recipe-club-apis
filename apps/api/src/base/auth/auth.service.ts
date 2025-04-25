@@ -60,7 +60,7 @@ export class AuthService {
           email: email,
           username: username,
           password: hashData(password),
-          is_activated: false,
+          is_activated: true,
           role: "user",
           profile: {
             create: {
@@ -154,6 +154,7 @@ export class AuthService {
           password: true,
         },
       });
+      this.logger.log(`Get user ${user_id}'s info successfully`);
       return {
         code: 0,
         message: "Get user's info successfully",

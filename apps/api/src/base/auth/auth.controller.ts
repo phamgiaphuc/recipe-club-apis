@@ -1,6 +1,7 @@
 import { AuthService } from "@app/api/base/auth/auth.service";
 import { CookieService } from "@app/api/base/auth/cookie.service";
 import { SignInDto } from "@app/api/base/auth/dto/signin.dto";
+import { SignUpDto } from "@app/api/base/auth/dto/signup.dto";
 import { AtGuard } from "@app/api/base/auth/guard/at.guard";
 import { GetUserPayload } from "@app/api/common/decorators/get-user-payload";
 import { PayloadProps } from "@app/api/common/types/jwt";
@@ -46,7 +47,19 @@ export class AuthController {
   @ApiOperation({ summary: "Sign up" })
   @Post(authRoute.signUp)
   @HttpCode(HttpStatus.OK)
-  async signUp() {}
+  async signUp(@Res() res: Response, @Body() body: SignUpDto) {
+    const { access_token, refresh_token } = await this.authService.signUp(body);
+    return this.cookieService
+      .setAuthenticationCookies({ res, refresh_token })
+      .status(HttpStatus.OK)
+      .json({
+        code: 0,
+        message: "User signed up successfully",
+        data: {
+          access_token,
+        },
+      });
+  }
 
   @ApiOperation({ summary: "Get curent user's info" })
   @UseGuards(AtGuard)
