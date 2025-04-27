@@ -1,7 +1,10 @@
 import { DefaultRouteProps } from "@app/api/common/types/routes/default";
 
 export interface UserRouteProps extends DefaultRouteProps {
-  createUserPantries: string;
+  createUserRatings: string;
+  getUserRatings: string;
+  updateUserRatings: string;
+  deleteUserRatings: string;
   getUserPantries: string;
   updateUserPantries: string;
 }
@@ -10,7 +13,10 @@ export const userRoute: UserRouteProps = {
   index: "/users",
   default: "/",
   status: "/api-status",
-  createUserPantries: "/pantries",
+  createUserRatings: "/ratings",
+  getUserRatings: "/ratings",
+  updateUserRatings: "/ratings/:id",
+  deleteUserRatings: "/ratings/:id",
   getUserPantries: "/pantries",
   updateUserPantries: "/pantries",
 };

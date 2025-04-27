@@ -22,8 +22,9 @@ model Users {
   updated_at   DateTime  @updatedAt
   deleted_at   DateTime?
 
-  profile  UserProfiles?
-  pantries UserPantries[]
+  profile     UserProfiles?
+  pantries    UserPantries[]
+  UserRatings UserRatings[]
 
   @@map("users")
 }
@@ -58,10 +59,16 @@ model UserPantries {
 model UserRatings {
   id         String    @id @default(uuid()) @db.Uuid
   user_id    String    @db.Uuid
-  recipe_id  String    @db.Uuid
+  recipe_id  String
   rating     Int       @default(0)
+  image_urls String[]
   comment    String?
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
+
+  user   Users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  recipe Recipes @relation(fields: [recipe_id], references: [id], onDelete: Cascade)
+
+  @@map("user_ratings")
 }
