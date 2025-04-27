@@ -123,6 +123,28 @@ CREATE TABLE "user_profiles" (
     "birth_date" TIMESTAMP(3)
 );
 
+-- CreateTable
+CREATE TABLE "user_pantries" (
+    "user_id" UUID NOT NULL,
+    "ingredient_id" INTEGER NOT NULL,
+
+    CONSTRAINT "user_pantries_pkey" PRIMARY KEY ("user_id","ingredient_id")
+);
+
+-- CreateTable
+CREATE TABLE "user_ratings" (
+    "id" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "recipe_id" TEXT NOT NULL,
+    "rating" INTEGER NOT NULL DEFAULT 0,
+    "comment" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
+
+    CONSTRAINT "user_ratings_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "ingredient_categories_name_key" ON "ingredient_categories"("name");
 
@@ -158,3 +180,15 @@ ALTER TABLE "recipe_ingredients" ADD CONSTRAINT "recipe_ingredients_ingredient_i
 
 -- AddForeignKey
 ALTER TABLE "user_profiles" ADD CONSTRAINT "user_profiles_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_pantries" ADD CONSTRAINT "user_pantries_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_pantries" ADD CONSTRAINT "user_pantries_ingredient_id_fkey" FOREIGN KEY ("ingredient_id") REFERENCES "ingredients"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_ratings" ADD CONSTRAINT "user_ratings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "user_ratings" ADD CONSTRAINT "user_ratings_recipe_id_fkey" FOREIGN KEY ("recipe_id") REFERENCES "recipes"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -7,7 +7,7 @@ import {
 } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Request, Response } from "express";
-import { assign } from "lodash";
+import { assign, omit } from "lodash";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -38,7 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message: data.message,
       };
     } else {
-      res_content = data;
+      res_content = omit(data, ["statusCode", "error"]);
     }
 
     if (this.configService.get<string>("NODE_ENV") === "development") {

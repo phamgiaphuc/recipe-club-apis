@@ -2,7 +2,7 @@ import { getAppConfigs } from "@app/api/common/config/app.config";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
-const tags = ["Auth", "Ingredients"];
+const tags = ["Auth", "Ingredients", "Images", "Users"];
 const developmentUrls = ["localhost"];
 const productionUrls = ["146.196.67.244"];
 
