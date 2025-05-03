@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 const tags = ["Auth", "Ingredients", "Images", "Users"];
 const developmentUrls = ["localhost"];
-const productionUrls = ["146.196.67.244"];
+const productionUrls = ["http://recipe-club.letsonair.vn", "146.196.67.244"];
 
 const generateTags = (tags: string[]) => {
   return tags.map((tag) => {
@@ -40,10 +40,17 @@ export const generateDocumentBuilder = (
     });
   } else {
     productionUrls.forEach((url, index) => {
-      document.addServer(
-        `http://${url}:${port}${global_prefix}`,
-        `Production server ${index + 1}`,
-      );
+      if (url.includes("http")) {
+        document.addServer(
+          `${url}${global_prefix}`,
+          `Production server ${index + 1}`,
+        );
+      } else {
+        document.addServer(
+          `http://${url}:${port}${global_prefix}`,
+          `Production server ${index + 1}`,
+        );
+      }
     });
   }
   return document.build();
