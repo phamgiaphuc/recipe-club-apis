@@ -4,6 +4,7 @@ import { CacheService } from "@app/common/cache/cache.service";
 import { DatabaseService } from "@app/common/database/database.service";
 import { comapareData, hashData } from "@app/common/utils/bcrypt";
 import {
+  HttpException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -18,6 +19,8 @@ import { TokenService } from "@app/api/base/auth/token.service";
 import { getUnixTime } from "date-fns";
 import { SignUpDto } from "@app/api/base/auth/dto/signup.dto";
 import { generateCustomAvatarUrl } from "@app/common/utils/avatar";
+import { GoogleProfileDto } from "@app/api/base/auth/dto/google-profile.dto";
+import { Request } from "express";
 
 @Injectable()
 export class AuthService {
@@ -41,6 +44,54 @@ export class AuthService {
       });
     } catch (error) {
       throw error;
+    }
+  }
+
+  public async googleSignIn(req: Request, profile: GoogleProfileDto) {
+    try {
+      let user = await this.databaseService.users.findFirst({
+        where: {
+          OR: [{ email: profile.email }],
+        },
+      });
+      if (!user) {
+        user = await this.databaseService.users.create({
+          data: {
+            email: profile.email,
+            password: "",
+            username: profile.name,
+            is_activated: true,
+            role: "user",
+            profile: {
+              create: {
+                first_name: profile.givenName,
+                last_name: profile.familyName,
+                full_name: `${profile.givenName} ${profile.familyName}`,
+                avatar_url: generateCustomAvatarUrl(
+                  profile.givenName,
+                  profile.familyName,
+                ),
+              },
+            },
+          },
+        });
+      }
+      const payload: PayloadProps = {
+        user_id: user.id,
+        session_id: getUnixTime(new Date()).toString(),
+        role: user.role,
+      };
+      const tokens = this.tokenService.getJwtTokens(payload);
+      await this.saveUserSession(payload);
+      this.logger.log(`User ${user.username} google signed in successfully`);
+      return {
+        ...tokens,
+      };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -84,7 +135,7 @@ export class AuthService {
         ...tokens,
       };
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof HttpException) {
         throw error;
       }
       throw new InternalServerErrorException(error);
@@ -129,7 +180,7 @@ export class AuthService {
         ...tokens,
       };
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof HttpException) {
         throw error;
       }
       throw new InternalServerErrorException(error);
@@ -163,7 +214,7 @@ export class AuthService {
         },
       };
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof HttpException) {
         throw error;
       }
       throw new InternalServerErrorException(error);

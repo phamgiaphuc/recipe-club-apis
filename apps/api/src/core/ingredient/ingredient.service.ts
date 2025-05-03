@@ -31,7 +31,7 @@ export class IngredientService {
           },
         },
       });
-  
+
       const formatted = data.map((ingredient) => {
         const category = ingredient.group?.[0]?.category;
         return {
@@ -41,7 +41,7 @@ export class IngredientService {
           category_id: category?.id ?? null,
         };
       });
-  
+
       return {
         data: formatted,
         totalIngredients: formatted.length,
