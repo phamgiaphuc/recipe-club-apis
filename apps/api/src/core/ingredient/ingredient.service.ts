@@ -23,16 +23,30 @@ export class IngredientService {
   public async getIngredients() {
     try {
       const data = await this.databaseService.ingredients.findMany({
-        take: 10,
+        include: {
+          group: {
+            include: {
+              category: true,
+            },
+          },
+        },
       });
+
+      const formatted = data.map((ingredient) => {
+        const category = ingredient.group?.[0]?.category;
+        return {
+          id: ingredient.id,
+          name: ingredient.name,
+          image_url: ingredient.image_url,
+          category_id: category?.id ?? null,
+        };
+      });
+
       return {
-        data: data,
-        totalIngredients: data.length,
+        data: formatted,
+        totalIngredients: formatted.length,
       };
     } catch (error) {
-      if (error instanceof HttpException) {
-        throw error;
-      }
       throw new InternalServerErrorException(error);
     }
   }
