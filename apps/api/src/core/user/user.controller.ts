@@ -23,10 +23,12 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+
 @ApiTags("Users")
-@ApiBearerAuth()
 @UseGuards(AtGuard)
+@ApiBearerAuth()
 @Controller(userRoute.index)
+
 export class UserController {
   constructor(
     private readonly userPantryService: UserPantryService,
