@@ -22,6 +22,7 @@ import { generateCustomAvatarUrl } from "@app/common/utils/avatar";
 import { GoogleProfileDto } from "@app/api/base/auth/dto/google-profile.dto";
 import { Request } from "express";
 
+
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsNotEmpty, ValidateNested } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber } from "class-validator";
 
 export interface UpdateUserPantryProps {
   ingredient_ids: number[];
@@ -7,11 +7,12 @@ export interface UpdateUserPantryProps {
 
 export class UpdateUserPantryDto implements UpdateUserPantryProps {
   @ApiProperty({
-    type: "number",
+    type: Number,
     isArray: true,
+    example: [1, 2, 3],
   })
   @IsArray()
-  @ValidateNested({ each: true })
   @IsNotEmpty()
+  @IsNumber({}, { each: true })
   ingredient_ids: number[];
 }
