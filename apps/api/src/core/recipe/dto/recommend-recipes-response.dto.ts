@@ -10,8 +10,12 @@ class RecipeItem {
   @ApiProperty({ required: false })
   image_url?: string;
 
+  @ApiProperty({ required: false })
+  domain?:string;
+
   @ApiProperty()
   matched_ingredients: number;
+
 }
 
 export class RecommendRecipesResponseDto {

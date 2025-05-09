@@ -23,6 +23,7 @@ export class RecipeService {
           id: recipe.id,
           title: recipe.title,
           image_url: recipe.image_url,
+          domain:recipe.domain,
           matched_ingredients: 0,
         })),
       };
@@ -36,7 +37,7 @@ export class RecipeService {
       where: { ingredient_id: { in: ingredientID } },
       _count: { ingredient_id: true },
       orderBy: { _count: { ingredient_id: 'desc' } },
-      take: 10,
+      take: 80,
     });
 
     if (numOfRecipes.length === 0) {
@@ -52,6 +53,7 @@ export class RecipeService {
         id: true,
         title: true,
         image_url: true,
+        domain:true,
       },
     });
 
