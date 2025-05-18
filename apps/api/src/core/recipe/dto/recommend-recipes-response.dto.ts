@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+
+
 class RecipeItem {
   @ApiProperty()
   id: string;
@@ -10,8 +12,15 @@ class RecipeItem {
   @ApiProperty({ required: false })
   image_url?: string;
 
+  @ApiProperty({ required: false })
+  domain?:string;
+
   @ApiProperty()
-  matched_ingredients: number;
+  matched_ingredients: number;;
+
+
+
+ 
 }
 
 export class RecommendRecipesResponseDto {
@@ -19,5 +28,5 @@ export class RecommendRecipesResponseDto {
   recipes: RecipeItem[];
 
   @ApiProperty()
-  total: number;
+  total: number;;
 }
