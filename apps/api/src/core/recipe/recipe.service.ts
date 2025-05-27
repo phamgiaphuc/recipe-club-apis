@@ -37,7 +37,7 @@ export class RecipeService {
       where: { ingredient_id: { in: ingredientID } },
       _count: { ingredient_id: true },
       orderBy: { _count: { ingredient_id: 'desc' } },
-      take: 80,
+      take: 100,
     });
 
     if (numOfRecipes.length === 0) {
@@ -213,7 +213,7 @@ async searchRecipes(query: string) {
 
   async recommendRandomRecipes() {
   const randomRecipes = await this.databaseService.recipes.findMany({
-    take: 10,
+    take: 80,
     select: {
       id: true,
       title: true,

@@ -78,4 +78,14 @@ export class UserController {
   async deleteUserRatings(@Param("id") id: string) {
     return this.userRatingService.deleteUserRatings(id);
   }
+
+  @ApiOperation({ summary: "Get all ratings for a specific recipe" })
+  @HttpCode(HttpStatus.OK)
+  @Get(userRoute.getRecipeRatings)
+  async getRecipeRatings(@Param("recipe_id") recipe_id: string) {
+    return this.userRatingService.getRecipeRatings(recipe_id);
+  }
 }
+ 
+
+
