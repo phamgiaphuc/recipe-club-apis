@@ -37,7 +37,7 @@ export class RecipeService {
       where: { ingredient_id: { in: ingredientID } },
       _count: { ingredient_id: true },
       orderBy: { _count: { ingredient_id: 'desc' } },
-      take: 80,
+      take: 100,
     });
 
     if (numOfRecipes.length === 0) {
@@ -156,9 +156,80 @@ export class RecipeService {
 }
 
 
+async searchRecipes(query: string) {
+
+  const byTitle = await this.databaseService.recipes.findMany({
+    where: {
+      title: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+    },
+  });
+
+ 
+  const byIngredient = await this.databaseService.recipes.findMany({
+    where: {
+      recipe_ingredients: {
+        some: {
+          ingredient: {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+    },
+  });
+
+  const all = [...byTitle, ...byIngredient];
+  const uniqueMap = new Map<string, typeof all[0]>();
+  for (const recipe of all) {
+    uniqueMap.set(recipe.id, recipe); 
+  }
+
+  const results = Array.from(uniqueMap.values());
+
+  return {
+    total: results.length,
+    recipes: results.slice(0, 10), 
+}
 
 
   }
 
-  
+  async recommendRandomRecipes() {
+  const randomRecipes = await this.databaseService.recipes.findMany({
+    take: 80,
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+    },
+  });
 
+  return {
+    total: randomRecipes.length,
+    recipes: randomRecipes.map(recipe => ({
+      ...recipe,
+    })),
+  };
+}
+
+
+  
+}
