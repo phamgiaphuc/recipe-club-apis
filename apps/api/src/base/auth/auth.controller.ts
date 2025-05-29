@@ -36,7 +36,8 @@ export class AuthController {
   @Post(authRoute.signIn)
   @HttpCode(HttpStatus.OK)
   async signIn(@Res() res: Response, @Body() body: SignInDto) {
-    const { access_token, refresh_token } = await this.authService.signIn(body);
+    const { access_token, refresh_token, user } =
+      await this.authService.signIn(body);
     return this.cookieService
       .setAuthenticationCookies({ res, refresh_token })
       .status(HttpStatus.OK)
@@ -45,6 +46,7 @@ export class AuthController {
         message: "User signed in successfully",
         data: {
           access_token,
+          user,
         },
       });
   }
@@ -53,7 +55,8 @@ export class AuthController {
   @Post(authRoute.signUp)
   @HttpCode(HttpStatus.OK)
   async signUp(@Res() res: Response, @Body() body: SignUpDto) {
-    const { access_token, refresh_token } = await this.authService.signUp(body);
+    const { access_token, refresh_token, user } =
+      await this.authService.signUp(body);
     return this.cookieService
       .setAuthenticationCookies({ res, refresh_token })
       .status(HttpStatus.OK)
@@ -62,6 +65,7 @@ export class AuthController {
         message: "User signed up successfully",
         data: {
           access_token,
+          user,
         },
       });
   }
@@ -88,7 +92,7 @@ export class AuthController {
     return res
       .status(HttpStatus.OK)
       .redirect(
-        `${this.configSerivice.get<string>("FE_REDIRECT_URL")}?access_token=${access_token}&refresh_token=${refresh_token}`,
+        `${this.configSerivice.get<string>("FE_REDIRECT_URL")}?access_token=${access_token}&refresh_token=${refresh_token}&success=true`,
       );
   }
 
