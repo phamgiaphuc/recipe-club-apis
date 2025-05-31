@@ -8,13 +8,15 @@ import { HttpExceptionFilter } from "@app/api/common/config/http-exception.confi
 export const enableAppMiddleware = (app: NestExpressApplication) => {
   const configService = app.get(ConfigService);
   const globalPrefix = configService.get<string>("API_SERVICE_GLOBAL_PREFIX");
+  const nodeEnv = configService.get<string>("NODE_ENV");
 
   app.enableCors({
     origin: [
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:5174",
-      "http://146.196.67.244:8000/",
+      nodeEnv === "production" &&
+        configService.getOrThrow<string>("FE_PRODUCTION_URL"),
     ],
     credentials: true,
   });
