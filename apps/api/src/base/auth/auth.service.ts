@@ -21,6 +21,7 @@ import { SignUpDto } from "@app/api/base/auth/dto/signup.dto";
 import { generateCustomAvatarUrl } from "@app/common/utils/avatar";
 import { GoogleProfileDto } from "@app/api/base/auth/dto/google-profile.dto";
 import { Request } from "express";
+import { omit } from "lodash";
 
 @Injectable()
 export class AuthService {
@@ -98,7 +99,7 @@ export class AuthService {
   public async signUp(body: SignUpDto) {
     try {
       const { email, username, password, first_name, last_name } = body;
-      const existed_user = this.databaseService.users.findFirst({
+      const existed_user = await this.databaseService.users.findFirst({
         where: {
           OR: [{ email: email }, { username: username }],
         },
@@ -122,6 +123,13 @@ export class AuthService {
             },
           },
         },
+        include: {
+          profile: {
+            omit: {
+              user_id: true,
+            },
+          },
+        },
       });
       const payload: PayloadProps = {
         user_id: user.id,
@@ -133,6 +141,7 @@ export class AuthService {
       this.logger.log(`User ${user.username} signed up successfully`);
       return {
         ...tokens,
+        user: omit(user, ["password"]),
       };
     } catch (error) {
       if (error instanceof HttpException) {
@@ -178,6 +187,7 @@ export class AuthService {
       this.logger.log(`User ${user.username} signed in successfully`);
       return {
         ...tokens,
+        user: omit(user, ["password"]),
       };
     } catch (error) {
       if (error instanceof HttpException) {

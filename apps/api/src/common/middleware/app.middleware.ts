@@ -13,6 +13,7 @@ export const enableAppMiddleware = (app: NestExpressApplication) => {
     origin: [
       "http://localhost:3000",
       "http://localhost:5173",
+      "http://localhost:5174",
       "http://146.196.67.244:8000/",
     ],
     credentials: true,

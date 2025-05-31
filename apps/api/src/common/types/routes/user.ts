@@ -7,6 +7,7 @@ export interface UserRouteProps extends DefaultRouteProps {
   deleteUserRatings: string;
   getUserPantries: string;
   updateUserPantries: string;
+  getRecipeRatings: string;
 }
 
 export const userRoute: UserRouteProps = {
@@ -19,4 +20,5 @@ export const userRoute: UserRouteProps = {
   deleteUserRatings: "/ratings/:id",
   getUserPantries: "/pantries",
   updateUserPantries: "/pantries",
+  getRecipeRatings: "/ratings/recipe/:recipe_id"
 };

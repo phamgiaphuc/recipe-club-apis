@@ -23,6 +23,7 @@ export class RecipeService {
           id: recipe.id,
           title: recipe.title,
           image_url: recipe.image_url,
+          domain:recipe.domain,
           matched_ingredients: 0,
         })),
       };
@@ -36,7 +37,7 @@ export class RecipeService {
       where: { ingredient_id: { in: ingredientID } },
       _count: { ingredient_id: true },
       orderBy: { _count: { ingredient_id: 'desc' } },
-      take: 10,
+      take: 100,
     });
 
     if (numOfRecipes.length === 0) {
@@ -52,6 +53,7 @@ export class RecipeService {
         id: true,
         title: true,
         image_url: true,
+        domain:true,
       },
     });
 
@@ -66,8 +68,168 @@ export class RecipeService {
 
   }
 
+  async getRecipeById(recipeId: string, userId: string) {
+  const nutritionFields = [
+    'calories_kcal', 'serving_size_g', 'fat_total_g', 'fat_saturated_g',
+    'fat_monounsaturated_g', 'fat_polyunsaturated_g', 'fat_trans_g',
+    'protein_g', 'sodium_mg', 'calcium_mg', 'magnesium_mg', 'potassium_mg',
+    'cholesterol_mg', 'iron_mg', 'zinc_mg', 'phosphorus_mg',
+    'carbohydrates_total_g', 'fiber_g', 'sugar_g',
+    'vitamin_a_ug', 'vitamin_c_mg', 'vitamin_b1_mg', 'vitamin_b2_mg',
+    'vitamin_b3_mg', 'vitamin_b6_mg', 'folate_dfe_ug', 'folate_food_ug',
+    'folic_acid_ug', 'vitamin_b12_ug', 'vitamin_d_ug', 'vitamin_e_mg',
+    'vitamin_k_ug', 'water_g',
+  ];
+
+  const selectFields = nutritionFields.reduce((acc, field) => {
+    acc[field] = true;
+    return acc;
+  }, {} as Record<string, true>);
+
+  const recipe = await this.databaseService.recipes.findUnique({
+    where: { id: recipeId },
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+      recipe_ingredients: {
+        select: {
+          ingredient: {
+            select: {
+              name: true,
+              id: true,
+              ...selectFields,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!recipe) {
+    throw new Error('Recipe not found');
+  }
+
+ 
+  const pantryIngredients = await this.databaseService.userPantries.findMany({
+    where: { user_id: userId },
+    select: { ingredient_id: true },
+  });
+  const pantryIngredientIds = pantryIngredients.map(p => p.ingredient_id);
+
+  const nutrition_facts = nutritionFields.reduce((acc, field) => {
+    acc[field] = 0;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const ingredientNames: string[] = [];
+  let matchedCount = 0;
+
+  for (const ri of recipe.recipe_ingredients) {
+    const ingredient = ri.ingredient;
+    ingredientNames.push(ingredient.name);
+
+  
+    if (pantryIngredientIds.includes(ingredient.id)) {
+      matchedCount++;
+    }
+
+    for (const field of nutritionFields) {
+      nutrition_facts[field] += (ingredient as any)[field] || 0;
+    }
+  }
+
+  for (const field of nutritionFields) {
+    nutrition_facts[field] = Math.round(nutrition_facts[field] * 100) / 100;
+  }
+
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    image_url: recipe.image_url,
+    domain: recipe.domain,
+    ingredients: ingredientNames,
+    nutrition_facts,
+    matched_ingredients: matchedCount, 
+  };
+}
+
+
+async searchRecipes(query: string) {
+
+  const byTitle = await this.databaseService.recipes.findMany({
+    where: {
+      title: {
+        contains: query,
+        mode: "insensitive",
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+    },
+  });
+
+ 
+  const byIngredient = await this.databaseService.recipes.findMany({
+    where: {
+      recipe_ingredients: {
+        some: {
+          ingredient: {
+            name: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+    },
+  });
+
+  const all = [...byTitle, ...byIngredient];
+  const uniqueMap = new Map<string, typeof all[0]>();
+  for (const recipe of all) {
+    uniqueMap.set(recipe.id, recipe); 
+  }
+
+  const results = Array.from(uniqueMap.values());
+
+  return {
+    total: results.length,
+    recipes: results.slice(0, 10), 
+}
+
 
   }
 
-  
+  async recommendRandomRecipes() {
+  const randomRecipes = await this.databaseService.recipes.findMany({
+    take: 80,
+    select: {
+      id: true,
+      title: true,
+      image_url: true,
+      domain: true,
+    },
+  });
 
+  return {
+    total: randomRecipes.length,
+    recipes: randomRecipes.map(recipe => ({
+      ...recipe,
+    })),
+  };
+}
+
+
+  
+}

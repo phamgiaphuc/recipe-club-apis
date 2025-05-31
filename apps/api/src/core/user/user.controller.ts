@@ -23,10 +23,12 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+
 @ApiTags("Users")
-@ApiBearerAuth()
 @UseGuards(AtGuard)
+@ApiBearerAuth()
 @Controller(userRoute.index)
+
 export class UserController {
   constructor(
     private readonly userPantryService: UserPantryService,
@@ -76,4 +78,14 @@ export class UserController {
   async deleteUserRatings(@Param("id") id: string) {
     return this.userRatingService.deleteUserRatings(id);
   }
+
+  @ApiOperation({ summary: "Get all ratings for a specific recipe" })
+  @HttpCode(HttpStatus.OK)
+  @Get(userRoute.getRecipeRatings)
+  async getRecipeRatings(@Param("recipe_id") recipe_id: string) {
+    return this.userRatingService.getRecipeRatings(recipe_id);
+  }
 }
+ 
+
+
