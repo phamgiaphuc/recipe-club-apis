@@ -15,7 +15,7 @@ export const enableAppMiddleware = (app: NestExpressApplication) => {
       "http://localhost:3000",
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://recipe-club-fe.netlify.app/",
+      "https://recipe-club-fe.netlify.app",
       nodeEnv === "production" &&
         configService.getOrThrow<string>("FE_PRODUCTION_URL"),
     ],
